@@ -216,3 +216,7 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# ignore uploaded files, but keep the .gitkeep file to ensure the directory exists in the repo
+backend/data/uploads/*
+!backend/data/uploads/.gitkeep
