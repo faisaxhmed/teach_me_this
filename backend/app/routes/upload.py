@@ -22,7 +22,7 @@ async def upload_pdf(file: UploadFile = File(...)):
     cleaned_text = clean_document(text, pages)
 
     return {
-        "filename": file.filename,
-        "page_count": len(pages),
-        "preview": cleaned_text[:500]  # just the first 500 chars, so the response isn't huge
-    }
+    "filename": file.filename,
+    "page_count": len(pages),
+    "text": cleaned_text
+}
