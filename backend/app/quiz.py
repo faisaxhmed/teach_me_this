@@ -46,3 +46,47 @@ def generate_quiz(topic_name, document_text):
         return parsed["questions"]
     except (json.JSONDecodeError, KeyError, IndexError) as e:
         raise ValueError(f"Failed to parse quiz generation response: {e}\nRaw output: {raw_output}")
+
+
+def explain_missed_questions(missed_questions, document_text):
+    """Generates a grounded explanation for each missed question, plus one targeted follow-up
+    question on the most-missed concept, using the document as the source of truth."""
+    missed_summary = "\n".join(
+        f"- Question: {q['question']}\n  Correct answer: {q['options'][q['correct_index']]}"
+        for q in missed_questions
+    )
+
+    system_prompt = """You are a tutor helping a student understand what they got wrong on a quiz.
+
+Rules:
+- Base explanations ONLY on the provided document text.
+- For each missed question, explain clearly why the correct answer is correct, in a way that \
+addresses the likely misunderstanding.
+- After explaining all missed questions, generate ONE new multiple-choice follow-up question \
+that targets the single concept the student seems weakest on, based on the pattern of what \
+they missed.
+- Return ONLY valid JSON, no other text, no markdown code fences, matching this exact shape:
+{"explanations": [{"question": "...", "explanation": "..."}], "followup_question": {"id": "f1", "question": "...", "options": ["...", "...", "...", "..."], "correct_index": 0}}
+"""
+
+    user_message = f"Document:\n{document_text}\n\nMissed questions:\n{missed_summary}"
+
+    response = client.messages.create(
+        model="claude-sonnet-4-5",
+        max_tokens=1500,
+        system=system_prompt,
+        messages=[{"role": "user", "content": user_message}]
+    )
+
+    raw_output = response.content[0].text.strip()
+
+    if raw_output.startswith("```"):
+        raw_output = raw_output.split("```")[1]
+        if raw_output.startswith("json"):
+            raw_output = raw_output[4:]
+        raw_output = raw_output.strip()
+
+    try:
+        return json.loads(raw_output)
+    except json.JSONDecodeError as e:
+        raise ValueError(f"Failed to parse explanation response: {e}\nRaw output: {raw_output}")
