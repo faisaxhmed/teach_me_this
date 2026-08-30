@@ -14,6 +14,12 @@ function App() {
   const [followupQuestion, setFollowupQuestion] = useState('')
   const [followupAnswer, setFollowupAnswer] = useState(null)
   const [loadingFollowup, setLoadingFollowup] = useState(false)
+  const [quiz, setQuiz] = useState(null)
+  const [quizId, setQuizId] = useState(null)
+  const [loadingQuiz, setLoadingQuiz] = useState(false)
+  const [selectedAnswers, setSelectedAnswers] = useState({})
+  const [quizResults, setQuizResults] = useState(null)
+  const [submittingQuiz, setSubmittingQuiz] = useState(false)
 
   function handleFileChange(event) {
     setFile(event.target.files[0])
@@ -52,6 +58,8 @@ function App() {
     setLoadingExplanation(true)
     setExplanation(null)
     setFollowupAnswer(null)
+    setQuiz(null)
+    setQuizResults(null)
 
     const response = await fetch('http://127.0.0.1:8000/learn/start', {
       method: 'POST',
@@ -85,6 +93,46 @@ function App() {
     setFollowupAnswer(data.answer)
     setLoadingFollowup(false)
     setFollowupQuestion('')
+  }
+
+  async function handleStartQuiz() {
+    setLoadingQuiz(true)
+    setQuiz(null)
+    setQuizResults(null)
+    setSelectedAnswers({})
+
+    const response = await fetch('http://127.0.0.1:8000/quiz', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        topic_name: selectedTopic.name,
+        document_text: uploadResult.text
+      })
+    })
+    const data = await response.json()
+    setQuiz(data.questions)
+    setQuizId(data.quiz_id)
+    setLoadingQuiz(false)
+  }
+
+  function handleAnswerSelect(questionId, optionIndex) {
+    setSelectedAnswers({ ...selectedAnswers, [questionId]: optionIndex })
+  }
+
+  async function handleSubmitQuiz() {
+    setSubmittingQuiz(true)
+
+    const response = await fetch('http://127.0.0.1:8000/quiz/submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        quiz_id: quizId,
+        answers: selectedAnswers
+      })
+    })
+    const data = await response.json()
+    setQuizResults(data)
+    setSubmittingQuiz(false)
   }
 
   return (
@@ -137,6 +185,44 @@ function App() {
           </button>
 
           {followupAnswer && <p>{followupAnswer}</p>}
+        </div>
+      )}
+
+      {explanation && !quiz && (
+        <button onClick={handleStartQuiz} disabled={loadingQuiz}>
+          {loadingQuiz ? 'Generating quiz...' : 'Take the quiz'}
+        </button>
+      )}
+
+      {quiz && !quizResults && (
+        <div>
+          <h2>Quiz: {selectedTopic.name}</h2>
+          {quiz.map((q) => (
+            <div key={q.id}>
+              <p>{q.question}</p>
+              {q.options.map((option, index) => (
+                <label key={index} style={{ display: 'block' }}>
+                  <input
+                    type="radio"
+                    name={q.id}
+                    checked={selectedAnswers[q.id] === index}
+                    onChange={() => handleAnswerSelect(q.id, index)}
+                  />
+                  {option}
+                </label>
+              ))}
+            </div>
+          ))}
+          <button onClick={handleSubmitQuiz} disabled={submittingQuiz}>
+            {submittingQuiz ? 'Submitting...' : 'Submit Quiz'}
+          </button>
+        </div>
+      )}
+
+      {quizResults && (
+        <div>
+          <h2>Results</h2>
+          <p>Score: {quizResults.score} / {quizResults.total}</p>
         </div>
       )}
     </div>
