@@ -4,6 +4,7 @@ import os
 import json
 import anthropic
 
+
 client = anthropic.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
 
 SYSTEM_PROMPT = """You are generating a multiple-choice quiz question set to test a student''s \
@@ -90,3 +91,4 @@ they missed.
         return json.loads(raw_output)
     except json.JSONDecodeError as e:
         raise ValueError(f"Failed to parse explanation response: {e}\nRaw output: {raw_output}")
+

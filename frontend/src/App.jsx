@@ -20,6 +20,10 @@ function App() {
   const [selectedAnswers, setSelectedAnswers] = useState({})
   const [quizResults, setQuizResults] = useState(null)
   const [submittingQuiz, setSubmittingQuiz] = useState(false)
+  const [explainResult, setExplainResult] = useState(null)
+  const [loadingExplain, setLoadingExplain] = useState(false)
+
+
 
   function handleFileChange(event) {
     setFile(event.target.files[0])
@@ -133,7 +137,24 @@ function App() {
     const data = await response.json()
     setQuizResults(data)
     setSubmittingQuiz(false)
+
+    if (data.missed_questions_raw && data.missed_questions_raw.length > 0) {
+      setLoadingExplain(true)
+      const explainResponse = await fetch('http://127.0.0.1:8000/quiz/explain', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          quiz_id: quizId,
+          missed_questions: data.missed_questions_raw,
+          document_text: uploadResult.text
+        })
+      })
+      const explainData = await explainResponse.json()
+      setExplainResult(explainData)
+      setLoadingExplain(false)
+    }
   }
+
 
   return (
     <div className="app">
@@ -223,6 +244,28 @@ function App() {
         <div>
           <h2>Results</h2>
           <p>Score: {quizResults.score} / {quizResults.total}</p>
+
+          {loadingExplain && <p>Loading explanations...</p>}
+
+          {explainResult && (
+            <div>
+              <h3>What you got wrong</h3>
+              {explainResult.explanations.map((item, index) => (
+                <div key={index}>
+                  <p><strong>{item.question}</strong></p>
+                  <p>{item.explanation}</p>
+                </div>
+              ))}
+
+              <h3>Try this one</h3>
+              <p>{explainResult.followup_question.question}</p>
+              <ul>
+                {explainResult.followup_question.options.map((option, index) => (
+                  <li key={index}>{option}</li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
       )}
     </div>
