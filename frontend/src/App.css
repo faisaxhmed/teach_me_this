@@ -1015,3 +1015,194 @@
   color: var(--color-indigo);
   font-weight: 600;
 }
+
+/* ==================================================================
+   Mobile (max-width: 768px). Desktop rules above are left untouched;
+   everything here only overrides sizing/spacing/layout for narrow
+   screens, tested against 360px, 390px, and 768px viewports.
+   ================================================================== */
+
+@media (max-width: 768px) {
+  /* ---- nav ---- */
+  .nav {
+    padding: 12px 14px;
+  }
+
+  .nav-brand {
+    font-size: 18px;
+    gap: 5px;
+  }
+
+  .nav-brand-icon {
+    font-size: 18px;
+  }
+
+  .nav > .btn {
+    padding: 7px 12px;
+    font-size: 13px;
+  }
+
+  /* ---- hero ---- */
+  .hero {
+    padding: 40px 20px 32px;
+  }
+
+  .hero h1 {
+    font-size: 23px;
+    line-height: 1.3;
+  }
+
+  .hero-sub {
+    font-size: 15px;
+  }
+
+  .hero .btn {
+    width: 100%;
+    min-height: 44px;
+  }
+
+  /* ---- steps (already stacks to 1 column below 760px; tighten spacing) ---- */
+  .steps {
+    padding: 16px 16px 48px;
+    gap: 14px;
+  }
+
+  .step-card {
+    padding: 22px 18px 20px;
+  }
+
+  /* ---- workspace / cards ---- */
+  .workspace {
+    padding: 8px 14px 56px;
+    gap: 16px;
+  }
+
+  .card {
+    padding: 16px 16px;
+  }
+
+  /* ---- dropzone ---- */
+  .dropzone {
+    padding: 32px 16px;
+  }
+
+  .dropzone-icon {
+    font-size: 38px;
+  }
+
+  /* ---- topics ---- */
+  .topic-list {
+    gap: 10px;
+  }
+
+  .topic-btn {
+    padding: 13px 14px;
+    min-height: 44px;
+  }
+
+  /* ---- Learn Mode chat + follow-up input ---- */
+  .chat-thread {
+    max-height: 360px;
+  }
+
+  .chat-question,
+  .chat-answer {
+    max-width: 100%;
+  }
+
+  .followup-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .followup-row .text-input {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .followup-row .btn {
+    width: 100%;
+    min-height: 44px;
+  }
+
+  /* ---- quiz + follow-up quiz ---- */
+  .option-label {
+    padding: 12px 14px;
+    margin-bottom: 10px;
+    min-height: 44px;
+  }
+
+  .closing-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .closing-actions .btn {
+    width: 100%;
+    min-height: 44px;
+  }
+
+  /* ---- CTA band ---- */
+  .cta-band {
+    padding: 40px 20px;
+  }
+
+  .cta-band h2 {
+    font-size: 21px;
+  }
+
+  .cta-band .btn {
+    width: 100%;
+    min-height: 44px;
+  }
+
+  /* ---- access gate ---- */
+  .access-gate {
+    padding: 40px 16px;
+  }
+
+  .access-card {
+    padding: 24px 18px;
+  }
+
+  .access-form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .access-form .text-input {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .access-form .btn {
+    width: 100%;
+    min-height: 44px;
+  }
+
+  /* ---- about page ---- */
+  .about {
+    padding: 32px 16px 56px;
+  }
+
+  .about-card {
+    padding: 24px 18px;
+  }
+
+  .about-title {
+    font-size: 22px;
+  }
+
+  /* ---- footer ---- */
+  .footer {
+    padding: 40px 20px 24px;
+  }
+
+  .footer-top {
+    gap: 32px;
+  }
+
+  .footer-brand p {
+    max-width: none;
+  }
+}
