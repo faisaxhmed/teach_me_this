@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { AccessContext } from './AccessContext.jsx'
+import { API_URL } from './api.js'
 
 // Gates the Workspace behind the shared access password. The token lives only in this
 // component's state (not localStorage), so it clears whenever the tab is closed or
@@ -18,7 +19,7 @@ function AccessGate({ children }) {
     setError(null)
 
     try {
-      const response = await fetch('http://127.0.0.1:8000/access/verify', {
+      const response = await fetch(`${API_URL}/access/verify`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ password })

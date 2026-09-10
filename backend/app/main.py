@@ -2,6 +2,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 import logging
+import os
 
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
@@ -20,9 +21,19 @@ app = FastAPI()
 
 app.state.limiter = limiter
 
+# Comma-separated list of allowed frontend origins, e.g.
+# "http://localhost:5173,https://your-vercel-url.vercel.app". Falls back to just the
+# local Vite dev server if the env var isn't set, so local dev still works safely.
+allowed_origins_env = os.environ.get("ALLOWED_ORIGINS")
+allowed_origins = (
+    [origin.strip() for origin in allowed_origins_env.split(",") if origin.strip()]
+    if allowed_origins_env
+    else ["http://localhost:5173"]
+)
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=allowed_origins,
     allow_methods=["*"],
     allow_headers=["*"],
 )

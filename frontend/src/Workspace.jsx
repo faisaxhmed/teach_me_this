@@ -4,6 +4,7 @@ import LoadingState from './LoadingState.jsx'
 import ThumbsFeedback from './ThumbsFeedback.jsx'
 import Dropzone from './Dropzone.jsx'
 import { useAccessToken } from './AccessContext.jsx'
+import { API_URL } from './api.js'
 
 const EXPLANATION_LOADING_MESSAGES = [
   'Reading your material...',
@@ -80,7 +81,7 @@ function Workspace() {
     const formData = new FormData()
     formData.append('file', file)
 
-    const response = await fetch('http://127.0.0.1:8000/upload', {
+    const response = await fetch(`${API_URL}/upload`, {
       method: 'POST',
       headers: { 'X-Access-Token': accessToken },
       body: formData
@@ -91,7 +92,7 @@ function Workspace() {
     setUploading(false)
 
     setLoadingTopics(true)
-    const topicsResponse = await fetch('http://127.0.0.1:8000/topics', {
+    const topicsResponse = await fetch(`${API_URL}/topics`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'X-Access-Token': accessToken },
       body: JSON.stringify({ text: data.text })
@@ -112,7 +113,7 @@ function Workspace() {
     setQuiz(null)
     setQuizResults(null)
 
-    const response = await fetch('http://127.0.0.1:8000/learn/start', {
+    const response = await fetch(`${API_URL}/learn/start`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'X-Access-Token': accessToken },
       body: JSON.stringify({
@@ -135,7 +136,7 @@ function Workspace() {
     setLoadingFollowup(true)
     setFollowupQuestion('')
 
-    const response = await fetch('http://127.0.0.1:8000/learn/followup', {
+    const response = await fetch(`${API_URL}/learn/followup`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'X-Access-Token': accessToken },
       body: JSON.stringify({
@@ -164,7 +165,7 @@ function Workspace() {
     setQuizResults(null)
     setSelectedAnswers({})
 
-    const response = await fetch('http://127.0.0.1:8000/quiz', {
+    const response = await fetch(`${API_URL}/quiz`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'X-Access-Token': accessToken },
       body: JSON.stringify({
@@ -189,7 +190,7 @@ function Workspace() {
   async function handleSubmitQuiz() {
     setSubmittingQuiz(true)
 
-    const response = await fetch('http://127.0.0.1:8000/quiz/submit', {
+    const response = await fetch(`${API_URL}/quiz/submit`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'X-Access-Token': accessToken },
       body: JSON.stringify({
@@ -203,7 +204,7 @@ function Workspace() {
 
     if (data.missed_questions_raw && data.missed_questions_raw.length > 0) {
       setLoadingExplain(true)
-      const explainResponse = await fetch('http://127.0.0.1:8000/quiz/explain', {
+      const explainResponse = await fetch(`${API_URL}/quiz/explain`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'X-Access-Token': accessToken },
         body: JSON.stringify({

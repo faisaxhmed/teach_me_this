@@ -12,6 +12,11 @@ dist
 dist-ssr
 *.local
 
+# Local dev override of VITE_API_URL etc. .env.production is intentionally NOT
+# ignored -- it holds the deployed API URL and isn't secret, so it's committed
+# to configure production builds (npm run build).
+.env
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
