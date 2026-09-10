@@ -5,6 +5,11 @@ import anthropic
 
 client = anthropic.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
 
+# Model used for Learn Mode explanations/follow-ups. Sonnet gives the strongest grounded
+# explanations; Haiku is noticeably faster with a small quality tradeoff on nuance. Swap here
+# to A/B the two — see the latency note in the Phase 6 changelog for measured results.
+LEARN_MODEL = "claude-sonnet-4-5"
+
 SYSTEM_PROMPT = """You are a tutor helping a student understand their own course material.
 
 Rules:
@@ -22,7 +27,7 @@ def generate_explanation(topic_name, document_text):
     user_message = f"Document:\n{document_text}\n\nExplain the topic: {topic_name}"
 
     response = client.messages.create(
-        model="claude-sonnet-4-5",
+        model=LEARN_MODEL,
         max_tokens=1000,
         system=SYSTEM_PROMPT,
         messages=[{"role": "user", "content": user_message}]
@@ -41,7 +46,7 @@ def answer_followup(document_text, history, question):
     messages.append({"role": "user", "content": question})
 
     response = client.messages.create(
-        model="claude-sonnet-4-5",
+        model=LEARN_MODEL,
         max_tokens=1000,
         system=SYSTEM_PROMPT,
         messages=messages
